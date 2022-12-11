@@ -1,0 +1,37 @@
+{% for message in app.flashes('error') %}
+    <div class="alert alert-danger">
+        {{ message }}
+    </div>
+{% endfor %}
+<div class="container">
+    <h1> {{ title }} </h1>
+    <div class="form">
+        {{ form(formulaire) }}
+    </div>
+</div>
+<script>
+    let dateArrivee = document.getElementById('animal_dateArrivee');
+    let dateDepart = document.getElementById('animal_dateDepart');
+    let dateNaissance = document.getElementById('animal_dateNaissance');
+
+    dateNaissance.addEventListener('change', function () {
+        dateArrivee.min = dateNaissance.value;
+        if (dateArrivee.value < dateNaissance.value) {
+            dateArrivee.value = dateNaissance.value;
+        }
+        if (dateNaissance.value === '') {
+            dateArrivee.min = '';
+        }
+        dateNaissance.required = dateNaissance.value !== '';
+    });
+
+    dateArrivee.addEventListener('change', function () {
+        dateDepart.min = dateArrivee.value;
+    });
+
+    dateDepart.addEventListener('change', function () {
+        dateDepart.required = dateDepart.value !== '';
+    });
+
+
+</script>

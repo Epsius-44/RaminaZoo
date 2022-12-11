@@ -24,7 +24,14 @@
                     <td>{{ animal.nom }}</td>
                     <td>{{ animal.genre }}</td>
                     <td>{{ animal.espece }}</td>
-                    <td>{{ animal.sexe }}</td>
+                    <td>{% if (animal.sexe == 0) %}
+                        Mâle
+                        {% elseif (animal.sexe == 1) %}
+                        Femelle
+                        {% else %}
+                            Non détérmniné
+                        {% endif %}
+                    </td>
                     {% if animal.quarantaine == 1 %}
                         <td>Oui</td>
                     {% else %}
