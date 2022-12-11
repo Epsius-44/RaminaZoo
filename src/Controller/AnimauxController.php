@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Animal;
+use App\Form\AnimalSupprimerType;
 use App\Form\AnimalType;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -12,17 +13,6 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class AnimauxController extends AbstractController
 {
-    #[Route('/animaux/liste/{id}', name: 'liste_animaux')]
-    public function listeAnimaux($id, ManagerRegistry $doctrine): Response
-    {
-        $repository = $doctrine->getRepository(Animal::class);
-        $animaux = $repository->findAll();
-        return $this->render('animaux/index.html.twig', [
-            'controller_name' => 'AnimauxController',
-            'animaux' => $animaux,
-        ]);
-    }
-
     #[Route('/animaux/ajouter/', name: 'ajouter_animal')]
     public function ajouterAnimal(ManagerRegistry $doctrine, Request $request): Response
     {
@@ -92,13 +82,42 @@ class AnimauxController extends AbstractController
     }
 
     #[Route('/animaux/supprimer/{id}', name: 'animal_supprimer')]
-    public function supprimerAnimal(): Response
+    public function supprimerAnimal($id, ManagerRegistry $doctrine, Request $request): Response
     {
+        $animal = $doctrine->getRepository(Animal::class)->find($id);
+        if (!$animal) {
+            throw $this->createNotFoundException(
+                'Aucun animal trouvé pour cet id : '.$id
+            );
+        }
+
+        $form = $this->createForm(AnimalSupprimerType::class, $animal);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $data = $form->getData();
+            $identification = $data->getIdentification();
+            $entityManager = $doctrine->getManager();
+            $entityManager->remove($data);
+            $entityManager->flush();
+            $this->addFlash('success', "L'animal avec l'identifiant $identification a bien été supprimé");
+            return $this->redirectToRoute('liste_animaux', ['id' => $animal->getId()]);
+        }
         return $this->render('animaux/supprimer.html.twig', [
             'controller_name' => 'AnimauxController',
         ]);
     }
+    #[Route('/animaux/{id}', name: 'liste_animaux')]
+    public function listeAnimaux($id, ManagerRegistry $doctrine): Response
+    {
+        $repository = $doctrine->getRepository(Animal::class);
+        $animaux = $repository->findAll();
+        return $this->render('animaux/index.html.twig', [
+            'controller_name' => 'AnimauxController',
+            'animaux' => $animaux,
+        ]);
+    }
 }
+
 
 
 function checkAddModifyAnimal($data, $doctrine, $animal): array
