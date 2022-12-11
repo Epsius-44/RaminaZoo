@@ -39,11 +39,10 @@ class AnimauxController extends AbstractController
                 $entityManager->persist($data);
                 $entityManager->flush();
                 $this->addFlash('success', "L'animal avec l'identifiant $identification a bien été ajouté");
-                return $this->redirectToRoute('liste_animaux', ['id' => $animal->getId()]);
+                return $this->redirectToRoute('liste_animaux', ['id' => $animal->getId()]); //TODO: rediriger vers la page de l'enclos
             }
         }
         return $this->render('animaux/ajouter.html.twig', [
-            'controller_name' => 'AnimauxController',
             'formulaire' => $form->createView(),
         ]);
     }
@@ -78,11 +77,10 @@ class AnimauxController extends AbstractController
                 $entityManager->persist($data);
                 $entityManager->flush();
                 $this->addFlash('success', "L'animal avec l'identifiant $identification a bien été modifié");
-                return $this->redirectToRoute('liste_animaux', ['id' => $animal->getId()]);
+                return $this->redirectToRoute('liste_animaux', ['id' => $animal->getId()]); //TODO: rediriger vers la page de l'enclos
             }
         }
         return $this->render('animaux/modifier.html.twig', [
-            'controller_name' => 'AnimauxController',
             'formulaire' => $form->createView(),
         ]);
     }
@@ -106,17 +104,18 @@ class AnimauxController extends AbstractController
             $entityManager->remove($data);
             $entityManager->flush();
             $this->addFlash('success', "L'animal avec l'identifiant $identification a bien été supprimé");
-            return $this->redirectToRoute('liste_animaux', ['id' => $animal->getId()]);
+            return $this->redirectToRoute('liste_animaux', ['id' => $id]); //TODO: rediriger vers la page de l'enclos
         }
         return $this->render('animaux/supprimer.html.twig', [
-            'controller_name' => 'AnimauxController',
+            'formulaire' => $form->createView(),
+            'animal' => $animal,
         ]);
     }
     #[Route('/animaux/{id}', name: 'liste_animaux')]
     public function listeAnimaux($id, ManagerRegistry $doctrine): Response
     {
         $repository = $doctrine->getRepository(Animal::class);
-        $animaux = $repository->findAll();
+        $animaux = $repository->findAll(); //TODO: récupérer les animaux de l'enclos
         return $this->render('animaux/index.html.twig', [
             'controller_name' => 'AnimauxController',
             'animaux' => $animaux,

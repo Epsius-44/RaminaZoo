@@ -4,8 +4,9 @@
 
 {% block body %}
     <div class="container">
-        <h1>Êtes-vous sûr de vouloir supprimer l'animal <i>{{ animal.identifiant }}</i></h1>
+        <h1>Êtes-vous sûr de vouloir supprimer l'animal <i>{{ animal.identification }}</i></h1>
         {{ form(formulaire) }}
         <a href="{{ path("liste_animaux", {"id":animal.id})}}" class="btn btn-secondary">Annuler</a>
+        {# TODO: redirection vers l'enclos de l'animal--> #}
     </div>
 {% endblock %}
