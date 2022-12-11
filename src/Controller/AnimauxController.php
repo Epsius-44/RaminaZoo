@@ -33,31 +33,11 @@ class AnimauxController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
             $identification = $data->getIdentification();
-            //le champ identification est unique, on vérifie qu'il n'existe pas déjà
-            $repository = $doctrine->getRepository(Animal::class);
-            $animalIdentification = $repository->findOneBy(['identification' => $identification]);
-            //si le numéro d'identification existe déjà, on retourne l'utilisateur sur le formulaire rempli avec un message d'erreur
-            if ($animalIdentification) {
-                $this->addFlash('error', 'Le numéro d\'identification existe déjà');
-                $error = true;
-            }
-            //si la date de naissance est supérieure à la date du jour et contient une date, on retourne l'utilisateur sur le formulaire rempli avec un message d'erreur
-            if ($data->getDateNaissance() > new \DateTime() && $data->getDateNaissance() != null) {
-                $this->addFlash('error', 'La date de naissance ne peut pas être supérieure à la date du jour');
-                $error = true;
-            }
-            //si la date d'arrivée est inférieure à la date de naissance, on retourne l'utilisateur sur le formulaire rempli avec un message d'erreur
-            if ($data->getDateArrivee() < $data->getDateNaissance() && $data->getDateNaissance() != null) {
-                $this->addFlash('error', 'La date d\'arrivée ne peut pas être inférieure à la date de naissance');
-                $error = true;
-            }
-            //si la date de départ est inférieure à la date d'arrivée, on retourne l'utilisateur sur le formulaire rempli avec un message d'erreur
-            if ($data->getDateDepart() < $data->getDateArrivee() && $data->getDateDepart() != null) {
-                $this->addFlash('error', 'La date de départ ne peut pas être inférieure à la date d\'arrivée');
-                $error = true;
-            }
-
-            if ($error){
+            $error = checkAddModifyAnimal($data, $doctrine, $animal);
+            if (count($error) != 0) {
+                for ($i = 0; $i < count($error); $i++) {
+                    $this->addFlash('error', $error[$i]);
+                }
                 return $this->render('animaux/ajouter.html.twig', [
                     'formulaire' => $form->createView(),
                 ]);
@@ -66,7 +46,7 @@ class AnimauxController extends AbstractController
                 $entityManager->persist($data);
                 $entityManager->flush();
                 $this->addFlash('success', "L'animal avec l'identifiant $identification a bien été ajouté");
-                return $this->redirectToRoute('liste_animaux',['id' => $animal->getId()]);
+                return $this->redirectToRoute('liste_animaux', ['id' => $animal->getId()]);
             }
         }
         return $this->render('animaux/ajouter.html.twig', [
@@ -76,10 +56,38 @@ class AnimauxController extends AbstractController
     }
 
     #[Route('/animaux/modifier/{id}', name: 'animal_modifier')]
-    public function modifierAnimal(): Response
+    public function modifierAnimal($id, ManagerRegistry $doctrine, Request $request): Response
     {
+        $animal = $doctrine->getRepository(Animal::class)->find($id);
+        if (!$animal) {
+            throw $this->createNotFoundException(
+                'Aucun animal trouvé pour cet id : '.$id
+            );
+        }
+        $form = $this->createForm(AnimalType::class, $animal);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $data = $form->getData();
+            $identification = $data->getIdentification();
+            $error = checkAddModifyAnimal($data, $doctrine, $animal);
+            if (count($error) != 0) {
+                for ($i = 0; $i < count($error); $i++) {
+                    $this->addFlash('error', $error[$i]);
+                }
+                return $this->render('animaux/modifier.html.twig', [
+                    'formulaire' => $form->createView(),
+                ]);
+            } else {
+                $entityManager = $doctrine->getManager();
+                $entityManager->persist($data);
+                $entityManager->flush();
+                $this->addFlash('success', "L'animal avec l'identifiant $identification a bien été modifié");
+                return $this->redirectToRoute('liste_animaux', ['id' => $animal->getId()]);
+            }
+        }
         return $this->render('animaux/modifier.html.twig', [
             'controller_name' => 'AnimauxController',
+            'formulaire' => $form->createView(),
         ]);
     }
 
@@ -90,4 +98,31 @@ class AnimauxController extends AbstractController
             'controller_name' => 'AnimauxController',
         ]);
     }
+}
+
+
+function checkAddModifyAnimal($data, $doctrine, $animal): array
+{
+    $error = array();
+    //le champ identification est unique, on vérifie qu'il n'existe pas déjà
+    $repository = $doctrine->getRepository(Animal::class);
+    $animalIdentification = $repository->findOneBy(['identification' => $data->getIdentification()]);
+    //si l'animal existe déjà, que l'id de l'animal n'est pas le même que celui de l'animal passé en paramètre et que l'animal n'est pas null
+    if ($animal != null && $animalIdentification != null && $animalIdentification->getId() != $animal->getId()) {
+        $error[] = "L'identifiant ".$data->getIdentification()." est déjà attribué à un autre animal";
+    }
+    //si la date de naissance est supérieure à la date du jour et contient une date, on retourne l'utilisateur sur le formulaire rempli avec un message d'erreur
+    if ($data->getDateNaissance() > new \DateTime() && $data->getDateNaissance() != null) {
+        $error[] = 'La date de naissance ne peut pas être supérieure à la date du jour';
+    }
+    //si la date d'arrivée est inférieure à la date de naissance, on retourne l'utilisateur sur le formulaire rempli avec un message d'erreur
+    if ($data->getDateArrivee() < $data->getDateNaissance() && $data->getDateNaissance() != null) {
+        $error[] = 'La date d\'arrivée ne peut pas être inférieure à la date de naissance';
+    }
+    //si la date de départ est inférieure à la date d'arrivée, on retourne l'utilisateur sur le formulaire rempli avec un message d'erreur
+    if ($data->getDateDepart() < $data->getDateArrivee() && $data->getDateDepart() != null) {
+        $error[] = 'La date de départ ne peut pas être inférieure à la date d\'arrivée';
+    }
+
+    return $error;
 }
