@@ -1,0 +1,43 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello AnimauxController!{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <h1>Les animaux</h1>
+        <table class="table">
+            <thead>
+            <tr>
+                <th>Id</th>
+                <th>Nom</th>
+                <th>Genre</th>
+                <th>Espèce</th>
+                <th>Sexe</th>
+                <th>Quarantaine</th>
+                <th>actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for animal in animaux %}
+                <tr>
+                    <td>{{ animal.identification }}</td>
+                    <td>{{ animal.nom }}</td>
+                    <td>{{ animal.genre }}</td>
+                    <td>{{ animal.espece }}</td>
+                    <td>{{ animal.sexe }}</td>
+                    {% if animal.quarantaine == 1 %}
+                        <td>Oui</td>
+                    {% else %}
+                        <td>Non</td>
+                    {% endif %}
+                    <td>
+                        <a href="{{ path('animal_modifier', {'id': animal.id}) }}">Modifier</a>
+                        <a href="{{ path('animal_supprimer', {'id': animal.id}) }}">Supprimer</a>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        <a href="{{ path('ajouter_animal') }}">Ajouter un nouvel animal</a>
+    </div>
+{% endblock %}
