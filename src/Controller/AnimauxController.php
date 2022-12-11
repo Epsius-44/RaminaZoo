@@ -22,6 +22,9 @@ class AnimauxController extends AbstractController
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
+            if ($data->getSexe() != 2 && $data->getSexe() != 1) {
+                $data->setSterile(0);
+            }
             $identification = $data->getIdentification();
             $error = checkAddModifyAnimal($data, $doctrine, $animal);
             if (count($error) != 0) {
@@ -58,6 +61,9 @@ class AnimauxController extends AbstractController
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
+            if ($data->getSexe() != 0 && $data->getSexe() != 1) {
+                $data->setSterile(0);
+            }
             $identification = $data->getIdentification();
             $error = checkAddModifyAnimal($data, $doctrine, $animal);
             if (count($error) != 0) {
@@ -129,6 +135,14 @@ function checkAddModifyAnimal($data, $doctrine, $animal): array
     //si l'animal existe déjà, que l'id de l'animal n'est pas le même que celui de l'animal passé en paramètre et que l'animal n'est pas null
     if ($animal != null && $animalIdentification != null && $animalIdentification->getId() != $animal->getId()) {
         $error[] = "L'identifiant ".$data->getIdentification()." est déjà attribué à un autre animal";
+    }
+    //si l'identifiant n'a pas 14 chiffres
+    if (strlen($data->getIdentification()) != 14) {
+        $error[] = "L'identifiant doit contenir 14 chiffres";
+    }
+    //si l'identifiant contient autre chose que des chiffres
+    if (!ctype_digit($data->getIdentification())) {
+        $error[] = "L'identifiant ne doit contenir que des chiffres";
     }
     //si la date de naissance est supérieure à la date du jour et contient une date, on retourne l'utilisateur sur le formulaire rempli avec un message d'erreur
     if ($data->getDateNaissance() > new \DateTime() && $data->getDateNaissance() != null) {

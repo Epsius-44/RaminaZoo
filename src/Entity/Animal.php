@@ -14,8 +14,9 @@ class Animal
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(type: Types::BIGINT)]
+    #[ORM\Column(length: 14, unique: true)]
     private ?string $identification = null;
+
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $nom = null;

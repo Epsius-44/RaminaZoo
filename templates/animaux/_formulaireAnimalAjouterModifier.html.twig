@@ -10,9 +10,13 @@
     </div>
 </div>
 <script>
-    let dateArrivee = document.getElementById('animal_dateArrivee');
-    let dateDepart = document.getElementById('animal_dateDepart');
-    let dateNaissance = document.getElementById('animal_dateNaissance');
+    const identification = document.getElementById('animal_identification');
+    const dateArrivee = document.getElementById('animal_dateArrivee');
+    const dateDepart = document.getElementById('animal_dateDepart');
+    const dateNaissance = document.getElementById('animal_dateNaissance');
+    const animalSexe = document.getElementById('animal_sexe');
+    const animalSterile = document.getElementById('animal_sterile').parentElement;
+
 
     dateNaissance.addEventListener('change', function () {
         dateArrivee.min = dateNaissance.value;
@@ -32,6 +36,27 @@
     dateDepart.addEventListener('change', function () {
         dateDepart.required = dateDepart.value !== '';
     });
+
+    animalSexe.addEventListener('change', function () {
+        displaySterile();
+    });
+
+    function displaySterile() {
+        animalSterile.style.display = animalSexe.value === "2" ? 'none' : 'block';
+    }
+
+    displaySterile();
+
+    identification.addEventListener('keypress', function (e) {
+        if (e.key < '0' || e.key > '9') {
+            e.preventDefault();
+        }
+    });
+
+    identification.addEventListener('change', function () {
+        identification.value = identification.value.padStart(14, '0');
+    });
+
 
 
 </script>

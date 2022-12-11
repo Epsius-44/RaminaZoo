@@ -8,6 +8,7 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\Length;
@@ -18,13 +19,13 @@ class AnimalType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('identification', NumberType::class, [
+            ->add('identification', TextType::class, [
                 'constraints' => [
                     new NotBlank(),
                     new Length(['min' => 1, 'max' => 14, 'exactMessage' => 'L\'identification doit comporter entre 1 et 14 chiffres']),
                 ],
-                'attr' => ['min' => 1, 'max' => 99999999999999, 'maxlength' => 14],
-                'html5' => true,
+                'attr' => ['minlength' => 1, 'maxlength' => 14],
+
             ])
             ->add('nom')
             ->add('dateNaissance', DateType::class, [
@@ -46,13 +47,14 @@ class AnimalType extends AbstractType
             ->add('espece')
             ->add('sexe', ChoiceType::class, [
                 'choices' => [
+                    'Non détérminé' => 2,
                     'Mâle' => 0,
                     'Femelle' => 1,
-                    'Non détérminé' => 2,
                 ],
                 'expanded' => false,
                 'multiple' => false,
                 'required' => true,
+
 
             ])
             ->add('sterile')
