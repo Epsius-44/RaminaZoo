@@ -65,7 +65,7 @@ class AnimauxController extends AbstractController
                 $entityManager = $doctrine->getManager();
                 $entityManager->persist($data);
                 $entityManager->flush();
-                $this->addFlash('success', 'L\'animal a bien été ajouté');
+                $this->addFlash('success', "L'animal avec l'identifiant $identification a bien été ajouté");
                 return $this->redirectToRoute('liste_animaux',['id' => $animal->getId()]);
             }
         }
