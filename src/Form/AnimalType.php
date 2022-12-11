@@ -63,6 +63,7 @@ class AnimalType extends AbstractType
                 'attr' => ['class' => 'btn btn-primary'],
             ])
         ;
+        //TODO: Ajouter la relation avec l'enclos
     }
 
     public function configureOptions(OptionsResolver $resolver): void
