@@ -1,0 +1,56 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des animaux{% endblock %}
+
+{% block body %}
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success">
+            {{ message }}
+        </div>
+    {% endfor %}
+    <div class="container">
+        <h1>Les animaux</h1>
+        <a href="{{ path('ajouter_animal') }}" class="btn btn-primary"><img src="{{ asset('icon/plus-square.svg') }}" alt=""/> Ajouter un animal</a>
+        <table class="table table-striped table-hover">
+            <thead>
+            <tr>
+                <th>Id</th>
+                <th>Nom</th>
+                <th>Genre</th>
+                <th>Espèce</th>
+                <th>Sexe</th>
+                <th>Quarantaine</th>
+                <th>actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for animal in animaux %}
+                <tr>
+                    <th scope="row">{{ animal.identification }}</th>
+                    <td>{{ animal.nom }}</td>
+                    <td>{{ animal.genre }}</td>
+                    <td>{{ animal.espece }}</td>
+                    <td>{% if (animal.sexe == 0) %}
+                        Mâle
+                        {% elseif (animal.sexe == 1) %}
+                        Femelle
+                        {% else %}
+                            Non détérmniné
+                        {% endif %}
+                    </td>
+                    {% if animal.quarantaine == 1 %}
+                        <td>Oui</td>
+                    {% else %}
+                        <td>Non</td>
+                    {% endif %}
+                    <td>
+                        <a href="{{ path('animal_modifier', {'id': animal.id}) }}" class="btn btn-warning"><img src="{{ asset('icon/edit.svg') }}" alt=""/></a>
+                        <a href="{{ path('animal_supprimer', {'id': animal.id}) }}" class="btn btn-danger"><img src="{{ asset('icon/trash-2.svg') }}" alt=""/></a>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        <a href="{{ path('ajouter_animal') }}" class="btn btn-primary"><img src="{{ asset('icon/plus-square.svg') }}" alt=""/> Ajouter un animal</a>
+    </div>
+{% endblock %}
