@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\EspaceRepository;
+
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
@@ -35,7 +36,7 @@ class Espace
     {
         $this->enclos = new ArrayCollection();
     }
-
+    
     public function getId(): ?int
     {
         return $this->id;
@@ -97,7 +98,7 @@ class Espace
         return $this->enclos;
     }
 
-    public function addEnclo(Enclos $enclo): self
+    public function addEnclos(Enclos $enclo): self
     {
         if (!$this->enclos->contains($enclo)) {
             $this->enclos->add($enclo);
@@ -107,7 +108,7 @@ class Espace
         return $this;
     }
 
-    public function removeEnclo(Enclos $enclo): self
+    public function removeEnclos(Enclos $enclo): self
     {
         if ($this->enclos->removeElement($enclo)) {
             // set the owning side to null (unless already changed)
