@@ -1,0 +1,33 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Gestion des espaces{% endblock %}
+
+{% block body %}
+
+<div class="container">
+    <h1>Gestion des Espaces</h1>
+    <table class="table table-striped">
+        <tr>
+            <th>Nom</th>
+            <th>Superficie (m²)</th>
+            <th></th>
+        </tr>
+        {% for e in espaces %}
+            <tr>
+            <td>{{ e.Nom }}</td>
+            <td>{{ e.Superficie }}</td>
+            <td>
+                <a href="" class="btn btn-primary">Modifier</a>
+                <a href="" class="btn btn-danger">Supprimer</a>
+            </td>
+            </tr>
+        {% endfor %}
+    </table>
+
+    <h2>Ajouter un espace</h2>
+    <div class="container" style="width: 25rem; margin: 1rem;">
+        {{ form(formulaire) }}
+    </div>
+</div>
+    
+{% endblock %}
