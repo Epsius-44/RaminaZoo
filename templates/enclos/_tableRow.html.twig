@@ -2,9 +2,17 @@
     <td>{{ enc.espace.getNom() }}</td>
     <td>{{ enc.nom }}</td>
     <td>{{ enc.superficie }}</td>
-    <td>??? / {{ enc.nbAnimauxMax }}</td>
+    <td>{{ enc.animals.count }} / {{ enc.nbAnimauxMax }}</td>
+    {% if ( attribute(enclosQuarantaine, enc.id)==true) %}
+        <td class="text-alert">Oui</td>
+    {% else %}
+        <td><a href="{{ path('app_enclos_quarantaine', {'id': enc.id}) }}" class="btn btn-sm btn-outline-warning">Mettre en quarantaine</a></td>
+    {% endif %}
     <td class="text-end">
         <div class="btn-group">
+            <a href="{{ path('liste_animaux', {'id': enc.id}) }}" class="btn btn-sm btn-primary">Voir</a>
+            <a href="{{ path('app_enclos_modifier', {'id': enc.id}) }}" class="btn btn-sm btn-warning"><img src="{{ asset('icon/edit.svg') }}" alt="" style="width: 1.5rem; height: auto"/></a>
+            <a href="{{ path('app_enclos_supprimer',{'id': enc.id}) }}" class="btn btn-sm btn-danger"><img src="{{ asset('icon/trash-2.svg') }}" alt="" style="width: 1.5rem; height: auto"/></a>
         </div>
     </td>
 </tr>

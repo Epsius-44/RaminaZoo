@@ -107,6 +107,11 @@ class Enclos
         return $this;
     }
 
+    public function __toString(): string
+    {
+        return $this->getNom();
+    }
+
     public function removeAnimal(Animal $animal): self
     {
         if ($this->animals->removeElement($animal)) {
@@ -118,6 +123,4 @@ class Enclos
 
         return $this;
     }
-
-
 }

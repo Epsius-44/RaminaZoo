@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier un enclos{% endblock %}
+
+{% block body %}
+    {% for message in app.flashes('error') %}
+        <div class="alert alert-danger">
+            {{ message }}
+        </div>
+    {% endfor %}
+<div class="container" style="max-width: 40rem">
+    <h1>Modifier un enclos</h1>
+{{ form(formulaire) }}
+</div>
+{% endblock %}
+
+

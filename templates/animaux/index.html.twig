@@ -39,9 +39,9 @@
                         {% endif %}
                     </td>
                     {% if animal.quarantaine == 1 %}
-                        <td>Oui</td>
+                        <td class="text-alert">Oui</td>
                     {% else %}
-                        <td>Non</td>
+                        <td class="text-success">Non</td>
                     {% endif %}
                     <td>
                         <a href="{{ path('animal_modifier', {'id': animal.id}) }}" class="btn btn-warning"><img src="{{ asset('icon/edit.svg') }}" alt=""/></a>

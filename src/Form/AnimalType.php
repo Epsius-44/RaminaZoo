@@ -60,18 +60,12 @@ class AnimalType extends AbstractType
 
             ])
             ->add('sterile')
-            ->add('enclos', EntityType::class, [
-                'class' => Enclos::class, // choix de la classe liée
-                'choice_label' => "id", // choix de ce qui sera affiché comme texte
-                'multiple' => false,
-                'expanded' => false
-            ])
+            ->add('enclos')
             ->add('quarantaine')
             ->add('Valider', SubmitType::class, [
                 'attr' => ['class' => 'btn btn-primary'],
             ])
         ;
-        //TODO: Ajouter la relation avec l'enclos
     }
 
     public function configureOptions(OptionsResolver $resolver): void

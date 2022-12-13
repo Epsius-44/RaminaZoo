@@ -40,7 +40,7 @@ class AnimauxController extends AbstractController
                 $entityManager->persist($data);
                 $entityManager->flush();
                 $this->addFlash('success', "L'animal avec l'identifiant $identification a bien été ajouté");
-                return $this->redirectToRoute('liste_animaux', ['id' => $animal->getId()]); //TODO: rediriger vers la page de l'enclos
+                return $this->redirectToRoute('liste_animaux', ['id' => $animal->getEnclos()->getId()]);
             }
         }
         return $this->render('animaux/ajouter.html.twig', [
@@ -79,7 +79,7 @@ class AnimauxController extends AbstractController
                 $entityManager->persist($data);
                 $entityManager->flush();
                 $this->addFlash('success', "L'animal avec l'identifiant $identification a bien été modifié");
-                return $this->redirectToRoute('liste_animaux', ['id' => $animal->getId()]); //TODO: rediriger vers la page de l'enclos
+                return $this->redirectToRoute('liste_animaux', ['id' => $animal->getEnclos()->getId()]);
             }
         }
         return $this->render('animaux/modifier.html.twig', [
@@ -106,7 +106,7 @@ class AnimauxController extends AbstractController
             $entityManager->remove($data);
             $entityManager->flush();
             $this->addFlash('success', "L'animal avec l'identifiant $identification a bien été supprimé");
-            return $this->redirectToRoute('liste_animaux', ['id' => $id]); //TODO: rediriger vers la page de l'enclos
+            return $this->redirectToRoute('liste_animaux', ['id' => $animal->getEnclos()->getId()]);
         }
         return $this->render('animaux/supprimer.html.twig', [
             'formulaire' => $form->createView(),
@@ -117,7 +117,8 @@ class AnimauxController extends AbstractController
     public function listeAnimaux($id, ManagerRegistry $doctrine): Response
     {
         $repository = $doctrine->getRepository(Animal::class);
-        $animaux = $repository->findAll(); //TODO: récupérer les animaux de l'enclos
+        //sélectionne tous les animaux de l'enclos avec l'id $id
+        $animaux = $repository->findBy(['enclos' => $id]);
         return $this->render('animaux/index.html.twig', [
             'controller_name' => 'AnimauxController',
             'animaux' => $animaux,
@@ -159,9 +160,9 @@ function checkAddModifyAnimal($data, $doctrine, $animal, $enclosId): array
     }
 
     if ($enclosId == null && count($data->getEnclos()->getAnimals()) >= $data->getEnclos()->getNbAnimauxMax()) {
-        $error[] = 'L\'enclos est plein';
+        $error[] = 'L\'enclos '.$animal->getEnclos().' est plein';
     } elseif ($enclosId != null && count($data->getEnclos()->getAnimals()) >= $data->getEnclos()->getNbAnimauxMax() && $data->getEnclos()->getId() != $enclosId) {
-        $error[] = 'L\'enclos est plein';
+        $error[] = 'L\'enclos '.$animal->getEnclos().' est plein';
     }
     return $error;
 }
