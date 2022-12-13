@@ -1,0 +1,46 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Enclos - RaminaZoo{% endblock %}
+
+{% block body %}
+    <main class="row container-fluid px-2 px-md-5 py-2 m-0">
+        <section class="col-md-8 col-xl-9">
+            <h1>Gestion des enclos - RaminaZoo</h1>
+            <div class="table-responsive">
+                <table class="table table-striped caption-top">
+                    <caption>Liste des enclos</caption>
+                    <thead>
+                    <tr>
+                        <th scope="col">Espace</th>
+                        <th scope="col">Nom</th>
+                        <th scope="col">Superficie (m²)</th>
+                        <th scope="col">Nombre d'animaux</th>
+                        <th scope="col" class="text-end">Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody class="table-group-divider">
+                    {% if enclos == [] %}
+                        <tr class="table-danger">
+                            <td colspan="3" class="text-center">Aucune catégorie disponible (>▂<) !</td>
+                        </tr>
+                    {% endif %}
+                    {% for enc in enclos %}
+                        {% include "enclos/_tableRow.html.twig" %}
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+        <section class="col-md-4 col-xl-3">
+            <h2>Ajouter un enclos</h2>
+            {{ form(formulaire) }}
+        </section>
+    </main>
+    <script>
+        document.getElementById("enclos_superficie").addEventListener('keypress', function (e) {
+            if (e.key !== ',' && e.key !== '.' && (e.key < '0' || e.key > '9')) {
+                e.preventDefault();
+            }
+        });
+    </script>
+{% endblock %}
