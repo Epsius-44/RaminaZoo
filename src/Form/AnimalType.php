@@ -3,6 +3,8 @@
 namespace App\Form;
 
 use App\Entity\Animal;
+use App\Entity\Enclos;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
@@ -58,6 +60,12 @@ class AnimalType extends AbstractType
 
             ])
             ->add('sterile')
+            ->add('enclos', EntityType::class, [
+                'class' => Enclos::class, // choix de la classe liée
+                'choice_label' => "id", // choix de ce qui sera affiché comme texte
+                'multiple' => false,
+                'expanded' => false
+            ])
             ->add('quarantaine')
             ->add('Valider', SubmitType::class, [
                 'attr' => ['class' => 'btn btn-primary'],

@@ -18,6 +18,7 @@ class AnimauxController extends AbstractController
     {
         $error = false;
         $animal = new Animal();
+        $enclosId = null;
         $form = $this->createForm(AnimalType::class, $animal);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
@@ -26,7 +27,7 @@ class AnimauxController extends AbstractController
                 $data->setSterile(0);
             }
             $identification = $data->getIdentification();
-            $error = checkAddModifyAnimal($data, $doctrine, $animal);
+            $error = checkAddModifyAnimal($data, $doctrine, $animal, $enclosId);
             if (count($error) != 0) {
                 for ($i = 0; $i < count($error); $i++) {
                     $this->addFlash('error', $error[$i]);
@@ -51,6 +52,7 @@ class AnimauxController extends AbstractController
     public function modifierAnimal($id, ManagerRegistry $doctrine, Request $request): Response
     {
         $animal = $doctrine->getRepository(Animal::class)->find($id);
+        $enclosId = $animal->getEnclos()->getId();
         if (!$animal) {
             throw $this->createNotFoundException(
                 'Aucun animal trouvé pour cet id : '.$id
@@ -64,7 +66,7 @@ class AnimauxController extends AbstractController
                 $data->setSterile(0);
             }
             $identification = $data->getIdentification();
-            $error = checkAddModifyAnimal($data, $doctrine, $animal);
+            $error = checkAddModifyAnimal($data, $doctrine, $animal, $enclosId);
             if (count($error) != 0) {
                 for ($i = 0; $i < count($error); $i++) {
                     $this->addFlash('error', $error[$i]);
@@ -125,7 +127,7 @@ class AnimauxController extends AbstractController
 
 
 
-function checkAddModifyAnimal($data, $doctrine, $animal): array
+function checkAddModifyAnimal($data, $doctrine, $animal, $enclosId): array
 {
     $error = array();
     //le champ identification est unique, on vérifie qu'il n'existe pas déjà
@@ -156,5 +158,10 @@ function checkAddModifyAnimal($data, $doctrine, $animal): array
         $error[] = 'La date de départ ne peut pas être inférieure à la date d\'arrivée';
     }
 
+    if ($enclosId == null && count($data->getEnclos()->getAnimals()) >= $data->getEnclos()->getNbAnimauxMax()) {
+        $error[] = 'L\'enclos est plein';
+    } elseif ($enclosId != null && count($data->getEnclos()->getAnimals()) >= $data->getEnclos()->getNbAnimauxMax() && $data->getEnclos()->getId() != $enclosId) {
+        $error[] = 'L\'enclos est plein';
+    }
     return $error;
 }
