@@ -22,6 +22,10 @@ class Enclos
     #[ORM\Column]
     private ?int $nbAnimauxMax = null;
 
+    #[ORM\ManyToOne(inversedBy: 'enclos')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Espace $espace = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -59,6 +63,18 @@ class Enclos
     public function setNbAnimauxMax(int $nbAnimauxMax): self
     {
         $this->nbAnimauxMax = $nbAnimauxMax;
+
+        return $this;
+    }
+
+    public function getEspace(): ?Espace
+    {
+        return $this->espace;
+    }
+
+    public function setEspace(?Espace $espace): self
+    {
+        $this->espace = $espace;
 
         return $this;
     }
