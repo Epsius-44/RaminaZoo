@@ -1,0 +1,20 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier l'espace : {{ espace.Nom }}{% endblock %}
+
+{% block body %}
+
+{% for message in app.flashes('error') %}
+    <div class="alert alert-danger">
+        {{ message }}
+    </div>
+{% endfor %}
+
+<div class="container">
+    <h1>Modifier l'espace : <i>{{ espace.Nom }}</i></h1>
+    <div class="container" style="width: 25rem; margin: 1rem;">
+        {{ form(formulaire) }}
+    </div>
+</div>
+    
+{% endblock %}
