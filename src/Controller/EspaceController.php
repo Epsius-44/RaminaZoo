@@ -2,7 +2,9 @@
 
 namespace App\Controller;
 
+use App\Entity\Enclos;
 use App\Entity\Espace;
+use App\Form\EspaceSupprimerType;
 use App\Form\EspaceType;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -140,47 +142,37 @@ class EspaceController extends AbstractController
         ]);
     }
 
-    // /**
-    //  * @Route("/categorie/supprimer/{id}", name="categorie_supprimer")
-    //  */
-    // public function supprimerCategorie($id, ManagerRegistry $doctrine, Request $request){
-    //     //récupérer la categorie dans la BDD
-    //     $categorie=$doctrine->getRepository(Categorie::class)->find($id);
+    #[Route('/espace/supprimer/{id}', name: 'app_espace_supprimer')]
+    public function supprimerEspace($id, ManagerRegistry $doctrine, Request $request): Response
+    {
+        $espace = $doctrine->getRepository(Espace::class)->find($id);
+        if (!$espace) {
+            throw $this->createNotFoundException(
+                'Aucun animal trouvé pour cet id : '.$id
+            );
+        }
 
-    //     //si on n'a rien trouvé -> 404
-    //     if(!$categorie){
-    //         throw $this->createNotFoundException("Aucune catégorie avec l'id $id");
-    //     }
-
-    //     //si on arrive là, c'est qu'on a trouvé une catégorie
-    //     //on crée le formulaire avec (il sera rempli avec ses valeurs)
-    //     $form=$this->createForm(CategorieSupprimerType::class,$categorie);
-
-    //     //gestion du retour du formulaire
-    //     //on ajoute Request dans les parametres comme dans le projet precedent
-    //     $form->handleRequest($request);
-
-    //     if ($form->isSubmitted() && $form->isValid()){
-    //         //le handleRequest a rempli notre objet $categorie
-    //         //qui n'est plus vide
-    //         //pour sauvegarder,on va récupérer un entityManager de doctrine
-    //         //qui comme son nom l'indique gère les entités
-    //         $em=$doctrine->getManager();
-    //         //on lui dit de la supprimer dans la BDD
-    //         $em->remove($categorie);
-
-    //         //générer l'insert
-    //         $em->flush();
-
-    //         //retour à l'accueil
-    //         return $this->redirectToRoute("app_home");
-    //     }
-
-    //     return $this->render("categories/supprimer.html.twig",[
-    //         'categorie' => $categorie,
-    //         'formulaire'=>$form->createView()
-    //     ]);
-    // }
+        $form = $this->createForm(EspaceSupprimerType::class, $espace);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $data = $form->getData();
+            $nom = $data->getNom();
+            //si l'espace contient des enclos, on ne peut pas le supprimer
+            if (count($espace->getEnclos()) > 0) {
+                $this->addFlash('error', 'L\'espace '.$nom.' contient des enclos, il ne peut pas être supprimé');
+                return $this->redirectToRoute('app_espace_home');
+            }
+            $entityManager = $doctrine->getManager();
+            $entityManager->remove($data);
+            $entityManager->flush();
+            $this->addFlash('success', "L'espace $nom a bien été supprimé");
+            return $this->redirectToRoute('app_espace_home');
+        }
+        return $this->render('espace/supprimer.html.twig', [
+            'formulaire' => $form->createView(),
+            'espace' => $espace,
+        ]);
+    }
 }
 
 function checkInsertData($espace): array
