@@ -3,12 +3,9 @@
 namespace App\Form;
 
 use App\Entity\Animal;
-use App\Entity\Enclos;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
-use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -41,7 +38,7 @@ class AnimalType extends AbstractType
             ])
             ->add('dateDepart',DateType::class, [
                 'widget' => 'single_text',
-                'attr' => ['min' => '1970-01-01', 'max' => '2069-12-31'],
+                'attr' => ['min' => date('Y-m-d'), 'max' => '2069-12-31'],
                 'required' => false,
             ])
             ->add('zooProprietaire')

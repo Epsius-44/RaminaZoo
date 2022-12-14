@@ -109,7 +109,9 @@ class Enclos
 
     public function __toString(): string
     {
-        return $this->getNom();
+        $strId = strval($this->getId());
+        $strNom = $this->getNom()===null ? '?' : $this->getNom();
+        return $strId." - ".$strNom;
     }
 
     public function removeAnimal(Animal $animal): self
