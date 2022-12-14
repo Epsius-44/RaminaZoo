@@ -20,13 +20,7 @@ class EnclosType extends AbstractType
     {
         $builder
             ->add('nom')
-            ->add('superficie', NumberType::class, [
-                'attr' => [
-                    'min' => 1,
-                    'step' => 1,
-                ],
-                'html5' => true,
-            ])
+            ->add('superficie', NumberType::class, ['label' => 'Superficie (m²)'])
             ->add('nbAnimauxMax', IntegerType::class, [
                 'attr' => ['min' => '0']
             ])
