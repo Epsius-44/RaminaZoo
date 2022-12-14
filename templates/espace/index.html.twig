@@ -10,24 +10,23 @@
         <tr>
             <th>Nom</th>
             <th>Superficie (m²)</th>
+            <th>Date d'ouverture</th>
+            <th>Date de fermeture</th>
             <th></th>
         </tr>
-        {% for e in espaces %}
+        {% for espace in espaces %}
             <tr>
-            <td>{{ e.Nom }}</td>
-            <td>{{ e.Superficie }}</td>
+            <td>{{ espace.Nom }}</td>
+            <td>{{ espace.Superficie }}</td>
+            <td>{{ espace.getOuvertureString }}</td>
+            <td>{{ espace.getFermetureString }}</td>
             <td>
-                <a href="" class="btn btn-primary">Modifier</a>
+                <a href="{{ path("app_espace_edit", {'id': espace.id}) }}" class="btn btn-primary">Modifier</a>
                 <a href="" class="btn btn-danger">Supprimer</a>
             </td>
             </tr>
         {% endfor %}
     </table>
-
-    <h2>Ajouter un espace</h2>
-    <div class="container" style="width: 25rem; margin: 1rem;">
-        {{ form(formulaire) }}
-    </div>
 </div>
     
 {% endblock %}

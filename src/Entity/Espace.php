@@ -60,6 +60,15 @@ class Espace
         return $this->ouverture;
     }
 
+    public function getOuvertureString(): String
+    {
+        if ($this->ouverture == null) {
+            return "";
+        } else {
+            return $this->ouverture->format('d/m/Y');
+        }
+    }
+
     public function setOuverture(?\DateTimeInterface $ouverture): self
     {
         $this->ouverture = $ouverture;
@@ -70,6 +79,15 @@ class Espace
     public function getFermeture(): ?\DateTimeInterface
     {
         return $this->fermeture;
+    }
+
+    public function getFermetureString(): String
+    {
+        if ($this->fermeture == null) {
+            return "";
+        } else {
+            return $this->fermeture->format('d/m/Y');
+        }
     }
 
     public function setFermeture(?\DateTimeInterface $fermeture): self
