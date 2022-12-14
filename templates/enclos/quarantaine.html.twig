@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mettre en quarantaine{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <h1>Êtes-vous sûr de vouloir mettre en quarantaine l'enclos<i>{{ enclos.nom }}</i></h1>
+        {{ form(formulaire) }}
+        <a href="{{ path("app_enclos")}}" class="btn btn-secondary">Annuler</a>
+    </div>
+{% endblock %}

@@ -6,7 +6,6 @@ use App\Entity\Animal;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
-use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -39,7 +38,7 @@ class AnimalType extends AbstractType
             ])
             ->add('dateDepart',DateType::class, [
                 'widget' => 'single_text',
-                'attr' => ['min' => '1970-01-01', 'max' => '2069-12-31'],
+                'attr' => ['min' => date('Y-m-d'), 'max' => '2069-12-31'],
                 'required' => false,
             ])
             ->add('zooProprietaire')
@@ -58,12 +57,12 @@ class AnimalType extends AbstractType
 
             ])
             ->add('sterile')
+            ->add('enclos')
             ->add('quarantaine')
             ->add('Valider', SubmitType::class, [
                 'attr' => ['class' => 'btn btn-primary'],
             ])
         ;
-        //TODO: Ajouter la relation avec l'enclos
     }
 
     public function configureOptions(OptionsResolver $resolver): void

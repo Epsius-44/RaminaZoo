@@ -18,6 +18,7 @@ class AnimauxController extends AbstractController
     {
         $error = false;
         $animal = new Animal();
+        $enclosId = null;
         $form = $this->createForm(AnimalType::class, $animal);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
@@ -26,7 +27,7 @@ class AnimauxController extends AbstractController
                 $data->setSterile(0);
             }
             $identification = $data->getIdentification();
-            $error = checkAddModifyAnimal($data, $doctrine, $animal);
+            $error = checkAddModifyAnimal($data, $doctrine, $animal, $enclosId);
             if (count($error) != 0) {
                 for ($i = 0; $i < count($error); $i++) {
                     $this->addFlash('error', $error[$i]);
@@ -39,7 +40,7 @@ class AnimauxController extends AbstractController
                 $entityManager->persist($data);
                 $entityManager->flush();
                 $this->addFlash('success', "L'animal avec l'identifiant $identification a bien été ajouté");
-                return $this->redirectToRoute('liste_animaux', ['id' => $animal->getId()]); //TODO: rediriger vers la page de l'enclos
+                return $this->redirectToRoute('liste_animaux', ['id' => $animal->getEnclos()->getId()]);
             }
         }
         return $this->render('animaux/ajouter.html.twig', [
@@ -51,6 +52,7 @@ class AnimauxController extends AbstractController
     public function modifierAnimal($id, ManagerRegistry $doctrine, Request $request): Response
     {
         $animal = $doctrine->getRepository(Animal::class)->find($id);
+        $enclosId = $animal->getEnclos()->getId();
         if (!$animal) {
             throw $this->createNotFoundException(
                 'Aucun animal trouvé pour cet id : '.$id
@@ -64,7 +66,7 @@ class AnimauxController extends AbstractController
                 $data->setSterile(0);
             }
             $identification = $data->getIdentification();
-            $error = checkAddModifyAnimal($data, $doctrine, $animal);
+            $error = checkAddModifyAnimal($data, $doctrine, $animal, $enclosId);
             if (count($error) != 0) {
                 for ($i = 0; $i < count($error); $i++) {
                     $this->addFlash('error', $error[$i]);
@@ -77,7 +79,7 @@ class AnimauxController extends AbstractController
                 $entityManager->persist($data);
                 $entityManager->flush();
                 $this->addFlash('success', "L'animal avec l'identifiant $identification a bien été modifié");
-                return $this->redirectToRoute('liste_animaux', ['id' => $animal->getId()]); //TODO: rediriger vers la page de l'enclos
+                return $this->redirectToRoute('liste_animaux', ['id' => $animal->getEnclos()->getId()]);
             }
         }
         return $this->render('animaux/modifier.html.twig', [
@@ -104,7 +106,7 @@ class AnimauxController extends AbstractController
             $entityManager->remove($data);
             $entityManager->flush();
             $this->addFlash('success', "L'animal avec l'identifiant $identification a bien été supprimé");
-            return $this->redirectToRoute('liste_animaux', ['id' => $id]); //TODO: rediriger vers la page de l'enclos
+            return $this->redirectToRoute('liste_animaux', ['id' => $animal->getEnclos()->getId()]);
         }
         return $this->render('animaux/supprimer.html.twig', [
             'formulaire' => $form->createView(),
@@ -115,7 +117,8 @@ class AnimauxController extends AbstractController
     public function listeAnimaux($id, ManagerRegistry $doctrine): Response
     {
         $repository = $doctrine->getRepository(Animal::class);
-        $animaux = $repository->findAll(); //TODO: récupérer les animaux de l'enclos
+        //sélectionne tous les animaux de l'enclos avec l'id $id
+        $animaux = $repository->findBy(['enclos' => $id]);
         return $this->render('animaux/index.html.twig', [
             'controller_name' => 'AnimauxController',
             'animaux' => $animaux,
@@ -125,7 +128,7 @@ class AnimauxController extends AbstractController
 
 
 
-function checkAddModifyAnimal($data, $doctrine, $animal): array
+function checkAddModifyAnimal($data, $doctrine, $animal, $enclosId): array
 {
     $error = array();
     //le champ identification est unique, on vérifie qu'il n'existe pas déjà
@@ -156,5 +159,10 @@ function checkAddModifyAnimal($data, $doctrine, $animal): array
         $error[] = 'La date de départ ne peut pas être inférieure à la date d\'arrivée';
     }
 
+    if ($enclosId == null && count($data->getEnclos()->getAnimals()) >= $data->getEnclos()->getNbAnimauxMax()) {
+        $error[] = 'L\'enclos '.$animal->getEnclos().' est plein';
+    } elseif ($enclosId != null && count($data->getEnclos()->getAnimals()) >= $data->getEnclos()->getNbAnimauxMax() && $data->getEnclos()->getId() != $enclosId) {
+        $error[] = 'L\'enclos '.$animal->getEnclos().' est plein';
+    }
     return $error;
 }

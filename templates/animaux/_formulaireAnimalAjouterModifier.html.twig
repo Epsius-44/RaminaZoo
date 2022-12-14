@@ -3,7 +3,7 @@
         {{ message }}
     </div>
 {% endfor %}
-<div class="container">
+<div class="container" style="max-width: 40rem">
     <h1> {{ title }} </h1>
     <div class="form">
         {{ form(formulaire) }}
@@ -22,6 +22,10 @@
         dateArrivee.min = dateNaissance.value;
         if (dateArrivee.value < dateNaissance.value) {
             dateArrivee.value = dateNaissance.value;
+            dateDepart.min = dateNaissance.value;
+            if (dateDepart.value < dateNaissance.value) {
+                dateDepart.value = dateNaissance.value;
+            }
         }
         if (dateNaissance.value === '') {
             dateArrivee.min = '';
@@ -31,6 +35,9 @@
 
     dateArrivee.addEventListener('change', function () {
         dateDepart.min = dateArrivee.value;
+        if (dateDepart.value < dateArrivee.value) {
+            dateDepart.value = dateArrivee.value;
+        }
     });
 
     dateDepart.addEventListener('change', function () {
@@ -48,7 +55,7 @@
     displaySterile();
 
     identification.addEventListener('keypress', function (e) {
-        if (e.key < '0' || e.key > '9') {
+        if ((e.key < '0' || e.key > '9') && e.key !== 'Enter') {
             e.preventDefault();
         }
     });
