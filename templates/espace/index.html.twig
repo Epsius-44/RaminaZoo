@@ -16,6 +16,11 @@
     {% endfor %}
     <div class="container">
         <h1>Gestion des Espaces</h1>
+        <div class="row mb-2">
+            <div class="col-12">
+                <a href="{{ path('app_espace_add') }}" class="btn btn-success">Ajouter un espace</a>
+            </div>
+        </div>
         <table class="table table-striped">
             <tr>
                 <th>Nom</th>

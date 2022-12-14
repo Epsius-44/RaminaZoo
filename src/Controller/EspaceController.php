@@ -148,7 +148,7 @@ class EspaceController extends AbstractController
         $espace = $doctrine->getRepository(Espace::class)->find($id);
         if (!$espace) {
             throw $this->createNotFoundException(
-                'Aucun animal trouvé pour cet id : '.$id
+                'Aucun espace trouvé pour cet id : '.$id
             );
         }
 
