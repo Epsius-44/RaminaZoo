@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Animal;
+use App\Entity\Enclos;
 use App\Form\AnimalSupprimerType;
 use App\Form\AnimalType;
 use Doctrine\Persistence\ManagerRegistry;
@@ -118,6 +119,12 @@ class AnimauxController extends AbstractController
     {
         $repository = $doctrine->getRepository(Animal::class);
         //sélectionne tous les animaux de l'enclos avec l'id $id
+        $enclos = $doctrine->getRepository(Enclos::class)->find($id);
+        if (!$enclos) {
+            throw $this->createNotFoundException(
+                'Aucun enclos trouvé pour cet id : '.$id
+            );
+        }
         $animaux = $repository->findBy(['enclos' => $id]);
         return $this->render('animaux/index.html.twig', [
             'controller_name' => 'AnimauxController',
