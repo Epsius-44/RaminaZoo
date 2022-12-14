@@ -3,30 +3,41 @@
 {% block title %}Gestion des espaces{% endblock %}
 
 {% block body %}
-
-<div class="container">
-    <h1>Gestion des Espaces</h1>
-    <table class="table table-striped">
-        <tr>
-            <th>Nom</th>
-            <th>Superficie (m²)</th>
-            <th>Date d'ouverture</th>
-            <th>Date de fermeture</th>
-            <th></th>
-        </tr>
-        {% for espace in espaces %}
+<main>
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success">
+            {{ message }}
+        </div>
+    {% endfor %}
+    {% for message in app.flashes('error') %}
+        <div class="alert alert-danger">
+            {{ message }}
+        </div>
+    {% endfor %}
+    <div class="container">
+        <h1>Gestion des Espaces</h1>
+        <table class="table table-striped">
             <tr>
-            <td>{{ espace.Nom }}</td>
-            <td>{{ espace.Superficie }}</td>
-            <td>{{ espace.getOuvertureString }}</td>
-            <td>{{ espace.getFermetureString }}</td>
-            <td>
-                <a href="{{ path("app_espace_edit", {'id': espace.id}) }}" class="btn btn-primary">Modifier</a>
-                <a href="" class="btn btn-danger">Supprimer</a>
-            </td>
+                <th>Nom</th>
+                <th>Superficie (m²)</th>
+                <th>Date d'ouverture</th>
+                <th>Date de fermeture</th>
+                <th></th>
             </tr>
-        {% endfor %}
-    </table>
-</div>
+            {% for espace in espaces %}
+                <tr>
+                    <td>{{ espace.Nom }}</td>
+                    <td>{{ espace.Superficie }}</td>
+                    <td>{{ espace.getOuvertureString }}</td>
+                    <td>{{ espace.getFermetureString }}</td>
+                    <td>
+                        <a href="{{ path("app_espace_edit", {'id': espace.id}) }}" class="btn btn-primary">Modifier</a>
+                        <a href="{{ path("app_espace_supprimer", {'id': espace.id}) }}" class="btn btn-danger">Supprimer</a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+</main>
     
 {% endblock %}
