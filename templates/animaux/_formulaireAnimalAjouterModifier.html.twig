@@ -35,7 +35,7 @@
 
     dateArrivee.addEventListener('change', function () {
         dateDepart.min = dateArrivee.value;
-        if (dateDepart.value < dateArrivee.value) {
+        if (dateDepart.value < dateArrivee.value && dateDepart.value !== '') {
             dateDepart.value = dateArrivee.value;
         }
     });
