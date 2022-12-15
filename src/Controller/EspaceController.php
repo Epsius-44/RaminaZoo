@@ -190,7 +190,7 @@ function checkInsertData($espace): array
     if (empty($espace->getOuverture()) and !empty($espace->getFermeture())) {
         $error[] = "Fermer tu ne pourras si ouvrert tu n'as pas !";
     }
-    if ($espace->getOuverture() > $espace->getFermeture()) {
+    if ($espace->getOuverture() > $espace->getFermeture() and !empty($espace->getFermeture())) {
         $error[] = "Après la date d'ouverture, la date de fermeture doit avoir lieu !";
     }
     return $error;
